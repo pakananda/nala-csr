@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jurnal NALA-CSR - SMA Negeri Taruna Nala Jatim</title>
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex items-center justify-center p-3 sm:p-6">
+
+  <!-- MAIN CARD CONTAINER -->
+  <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+    
+    <!-- HEADER -->
+    <div class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 p-6 text-white text-center relative shadow-md">
+  <!-- Pembungkus Logo agar rata tengah -->
+  <div class="flex justify-center mb-3">
+    <img src="https://lh3.googleusercontent.com/d/1erlU3Wwr8NuIusv6FXvG3qahEv7D1eQL" alt="Logo SMAN Taruna Nala" class="w-20 h-20 object-contain filter drop-shadow-md">
+  </div>
+  
+  <span class="px-3.5 py-1 bg-white/10 text-blue-200 text-xs font-bold rounded-full border border-white/20 uppercase tracking-wider mb-2 inline-block backdrop-blur-sm">
+    SMA Negeri Taruna Nala Jawa Timur
+  </span>
+  <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">JURNAL NALA-CLEAN, SAFE, & RESPECT (NALA-CSR)</h1>
+  <p class="text-xs sm:text-sm text-blue-100/80 mt-1 font-medium">Sistem Rekapitulasi Penilaian Kebersihan & Kepedulian Kelas</p>
+</div>
+
+    <!-- 1. LOGIN SECTION -->
+    <div id="loginSection" class="p-6 sm:p-12 max-w-md mx-auto space-y-6">
+      <div class="text-center space-y-1">
+        <h2 class="text-xl font-bold text-slate-900">Selamat Datang, Bapak/Ibu Guru</h2>
+        <p class="text-xs text-slate-500">Silakan login untuk mengisi jurnal penilaian kelas</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Username</label>
+          <div class="relative">
+            <i data-lucide="user" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+            <input type="text" id="userInput" placeholder="Masukkan Username..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20 transition">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+            <input type="password" id="passInput" placeholder="Masukkan Password..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20 transition">
+          </div>
+        </div>
+
+        <button onclick="doLogin()" id="btnLogin" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-blue-700/25 active:scale-[0.98]">
+          <span>Login Sistem</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+        <p id="loginError" class="text-rose-600 text-xs text-center font-semibold hidden bg-rose-50 border border-rose-200 py-2.5 rounded-xl"></p>
+      </div>
+    </div>
+
+    <!-- 2. FORM PENILAIAN SECTION -->
+    <div id="formSection" class="hidden p-5 sm:p-8 space-y-6">
+      
+      <!-- USER INFO BAR -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-600/20 flex items-center justify-center text-blue-700 font-bold">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-slate-500">Guru Penilai:</p>
+            <p id="guruName" class="text-sm font-bold text-slate-800"></p>
+          </div>
+        </div>
+        <button onclick="logout()" class="text-xs font-bold text-slate-600 hover:text-rose-600 transition flex items-center gap-1.5 bg-white px-3.5 py-2 rounded-lg border border-slate-300 shadow-sm hover:border-rose-300">
+          <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+        </button>
+      </div>
+
+      <!-- FILTER & SETTING JAM MENGAJAR -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50/80 p-4.5 rounded-xl border border-slate-200">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal Mengajar</label>
+          <input type="date" id="tglInput" onchange="onClassOrDateChange()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800 focus:border-blue-600 outline-none shadow-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Kelas</label>
+          <select id="kelasInput" onchange="onClassOrDateChange()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800 focus:border-blue-600 outline-none shadow-sm">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="X-1">X-1</option>
+            <option value="X-2">X-2</option>
+            <option value="XI-1">XI-1</option>
+            <option value="XI-2">XI-2</option>
+            <option value="XII-1">XII-1</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Berapa JP Anda Mengajar Hari Ini?</label>
+          <select id="jumlahJpInput" onchange="generateScoreTable()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800 focus:border-blue-600 outline-none shadow-sm">
+            <option value="1">1 JP</option>
+            <option value="2">2 JP</option>
+            <option value="3">3 JP</option>
+            <option value="4">4 JP</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE STATUS BOX -->
+      <div id="statusBox" class="hidden p-4 rounded-xl text-xs sm:text-sm font-semibold transition flex items-start gap-3">
+        <i id="statusIcon" class="w-5 h-5 mt-0.5 shrink-0"></i>
+        <span id="statusText"></span>
+      </div>
+
+      <!-- MAIN INPUT SCORE TABLE -->
+      <div id="assessmentContainer" class="hidden space-y-5">
+        
+        <div class="overflow-x-auto rounded-xl border border-slate-300 bg-white shadow-sm">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-white">
+                <th class="p-3.5 w-1/4 min-w-[180px] font-bold border-r border-slate-700">Indikator Penilaian</th>
+                <th class="p-3.5 min-w-[260px] font-bold border-r border-slate-700">Sub Indikator / Deskripsi</th>
+                <th id="dynamicJpHeaders" class="p-0"></th>
+              </tr>
+            </thead>
+            <tbody id="assessmentBody" class="divide-y divide-slate-200 text-slate-700 font-medium">
+              
+              <!-- CLEAN SECTION -->
+              <tr class="bg-blue-50/70 font-bold text-blue-900">
+                <td colspan="2" class="p-3 border-r border-slate-200">A. CLEAN (Kebersihan & Kerapian)</td>
+                <td id="cleanHeaderSpan" class="bg-blue-100/50"></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 border-r border-slate-200 font-semibold text-slate-800">1. Kebersihan Bangunan & Mebel</td>
+                <td class="p-3 border-r border-slate-200 text-slate-500">Kebersihan lantai dalam, lantai teras, lemari, meja, kursi, papan tulis, pintu</td>
+                <td id="row_c1_inputs" class="p-0"></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 border-r border-slate-200 font-semibold text-slate-800">2. Kerapian & Keindahan</td>
+                <td class="p-3 border-r border-slate-200 text-slate-500">Penataan meja kursi guru & siswa, alat kebersihan, hiasan kelas, isi lemari, dll.</td>
+                <td id="row_c2_inputs" class="p-0"></td>
+              </tr>
+
+              <!-- SAFE SECTION -->
+              <tr class="bg-emerald-50/70 font-bold text-emerald-900">
+                <td colspan="2" class="p-3 border-r border-slate-200">B. SAFE (Kelengkapan & Keamanan)</td>
+                <td id="safeHeaderSpan" class="bg-emerald-100/50"></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 border-r border-slate-200 font-semibold text-slate-800">1. Alat Kebersihan</td>
+                <td class="p-3 border-r border-slate-200 text-slate-500">Keberadaan & kebersihan alat kebersihan (sapu, kemoceng, cikrak)</td>
+                <td id="row_s1_inputs" class="p-0"></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 border-r border-slate-200 font-semibold text-slate-800">2. Alat Tulis Pembelajaran</td>
+                <td class="p-3 border-r border-slate-200 text-slate-500">Keberadaan alat tulis kelas (spidol, penghapus, penggaris, papan)</td>
+                <td id="row_s2_inputs" class="p-0"></td>
+              </tr>
+
+              <!-- RESPECT SECTION -->
+              <tr class="bg-amber-50/70 font-bold text-amber-900">
+                <td colspan="2" class="p-3 border-r border-slate-200">C. RESPECT (Sikap & Perilaku)</td>
+                <td id="respectHeaderSpan" class="bg-amber-100/50"></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 border-r border-slate-200 font-semibold text-slate-800">1. Menghormati Guru</td>
+                <td class="p-3 border-r border-slate-200 text-slate-500">Menghormati guru mengajar (tidak tidur, tidak gaduh, tidak menghambat KBM)</td>
+                <td id="row_r1_inputs" class="p-0"></td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 border-r border-slate-200 font-semibold text-slate-800">2. Menghormati Teman</td>
+                <td class="p-3 border-r border-slate-200 text-slate-500">Saling menghormati dan menghargai teman sesama kelas</td>
+                <td id="row_r2_inputs" class="p-0"></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CATATAN TAMBAHAN -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Catatan Tambahan Guru (Opsional)</label>
+          <textarea id="catatan" rows="2" placeholder="Tuliskan catatan kondisi kelas jika ada..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-600/20 outline-none transition"></textarea>
+        </div>
+
+        <!-- SUBMIT BUTTON -->
+        <button onclick="submitForm()" id="btnSubmit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 active:scale-[0.99]">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Kirim Penilaian Jurnal</span>
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- MODAL POPUP MODERN (Gantikan alert biasa) -->
+  <div id="customModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden transition-opacity">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-md w-full p-6 text-center space-y-5 animate-in fade-in zoom-in duration-200">
+      
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+        <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-xl font-extrabold text-slate-900">Penilaian Berhasil Disimpan!</h3>
+        <p class="text-xs text-slate-500 leading-relaxed">Seluruh data penilaian jurnal kelas telah tercatat ke sistem Google Spreadsheet secara otomatis.</p>
+      </div>
+
+      <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+        Apakah Anda ingin melanjutkan pengisian untuk kelas lain?
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <button onclick="handleModalChoice('repeat')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Isi Kelas Lain
+        </button>
+        <button onclick="handleModalChoice('logout')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Selesai & Logout
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzPVu4ncRWQKbUbATjxBLH2sfD-0a7Z6PuLTwRdZFUUi9uR4rz1CtlP118Q-ec4evSymA/exec";
+
+    let currentUser = {};
+    let currentFilledHours = [];
+
+    document.getElementById('tglInput').value = new Date().toISOString().substring(0, 10);
+    lucide.createIcons();
+
+    async function sendApiRequest(data) {
+      const formData = new URLSearchParams();
+      formData.append("data", JSON.stringify(data));
+
+      const response = await fetch(GAS_API_URL, {
+        method: "POST",
+        body: formData
+      });
+      return await response.json();
+    }
+
+    async function doLogin() {
+      const u = document.getElementById('userInput').value;
+      const p = document.getElementById('passInput').value;
+      const btn = document.getElementById('btnLogin');
+      const err = document.getElementById('loginError');
+
+      if (!u || !p) {
+        showError('Mohon isi Username dan Password!');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memeriksa...`;
+      lucide.createIcons();
+      err.classList.add('hidden');
+
+      try {
+        const res = await sendApiRequest({ action: 'login', username: u, password: p });
+        if (res.success) {
+          currentUser = res;
+          document.getElementById('guruName').innerText = res.nama;
+          document.getElementById('loginSection').classList.add('hidden');
+          document.getElementById('formSection').classList.remove('hidden');
+        } else {
+          showError(res.message || 'Login Gagal!');
+        }
+      } catch (e) {
+        showError('Gagal terhubung ke Server. Pastikan URL GAS_API_URL sudah benar.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Login Sistem</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        lucide.createIcons();
+      }
+    }
+
+    function showError(msg) {
+      const err = document.getElementById('loginError');
+      err.innerText = msg;
+      err.classList.remove('hidden');
+    }
+
+    function logout() {
+      location.reload();
+    }
+
+    async function onClassOrDateChange() {
+      const kelas = document.getElementById('kelasInput').value;
+      const tgl = document.getElementById('tglInput').value;
+      const statusBox = document.getElementById('statusBox');
+      const container = document.getElementById('assessmentContainer');
+
+      if (!kelas || !tgl) {
+        statusBox.classList.add('hidden');
+        container.classList.add('hidden');
+        return;
+      }
+
+      statusBox.className = 'p-4 rounded-xl text-xs sm:text-sm font-semibold flex items-start gap-3 bg-slate-100 border border-slate-300 text-slate-700';
+      statusBox.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin text-blue-600 shrink-0"></i> Memeriksa status jam kelas ${kelas}...`;
+      statusBox.classList.remove('hidden');
+      lucide.createIcons();
+
+      try {
+        const res = await sendApiRequest({ action: 'getFilledHours', kelas: kelas, tanggal: tgl });
+        currentFilledHours = res.filledHours || [];
+        const totalFilled = currentFilledHours.length;
+        const remaining = 7 - totalFilled;
+
+        if (totalFilled >= 7) {
+          statusBox.className = 'p-4 rounded-xl text-xs sm:text-sm font-semibold flex items-start gap-3 bg-rose-50 border border-rose-200 text-rose-800';
+          statusBox.innerHTML = `<i data-lucide="alert-octagon" class="w-5 h-5 text-rose-600 shrink-0"></i> <span>Hari ini guru pada kelas <b>${kelas}</b> sudah mengisi sebanyak <b>7 JP (Penuh)</b>. Batas maksimal pengisian per kelas adalah 7 JP per hari.</span>`;
+          container.classList.add('hidden');
+        } else {
+          statusBox.className = 'p-4 rounded-xl text-xs sm:text-sm font-semibold flex items-start gap-3 bg-blue-50 border border-blue-200 text-blue-900';
+          statusBox.innerHTML = `<i data-lucide="info" class="w-5 h-5 text-blue-600 shrink-0"></i> <span>Hari ini guru pada kelas <b>${kelas}</b> sudah mengisi sebanyak <b>${totalFilled} JP</b>, sehingga tersisa <b>${remaining} JP</b> lagi (maksimal 7 JP per hari).</span>`;
+          
+          container.classList.remove('hidden');
+          generateScoreTable();
+        }
+      } catch (e) {
+        statusBox.className = 'p-4 rounded-xl text-xs sm:text-sm font-semibold flex items-start gap-3 bg-rose-50 border border-rose-200 text-rose-800';
+        statusBox.innerHTML = `<i data-lucide="alert-circle" class="w-5 h-5 text-rose-600 shrink-0"></i> Gagal mengambil status jam terisi dari spreadsheet.`;
+      }
+      lucide.createIcons();
+    }
+
+    function generateScoreTable() {
+      const jpNeeded = parseInt(document.getElementById('jumlahJpInput').value) || 1;
+      
+      let availableJpList = [];
+      for (let i = 1; i <= 7; i++) {
+        if (!currentFilledHours.includes(i)) {
+          availableJpList.push(i);
+        }
+      }
+
+      const selectedJpForTeacher = availableJpList.slice(0, jpNeeded);
+
+      // 1. Generate Header Jam
+      const headerContainer = document.getElementById('dynamicJpHeaders');
+      let headerHtml = `<table class="w-full border-collapse"><tr>`;
+      selectedJpForTeacher.forEach(jp => {
+        headerHtml += `<th class="p-3.5 bg-slate-900 text-blue-300 text-center font-bold border-r border-slate-700 last:border-0" style="width:${100/selectedJpForTeacher.length}%">Jam Ke-${jp}</th>`;
+      });
+      headerHtml += `</tr></table>`;
+      headerContainer.innerHTML = headerHtml;
+
+      // Colspan Spacers
+      document.getElementById('cleanHeaderSpan').setAttribute('colspan', selectedJpForTeacher.length);
+      document.getElementById('safeHeaderSpan').setAttribute('colspan', selectedJpForTeacher.length);
+      document.getElementById('respectHeaderSpan').setAttribute('colspan', selectedJpForTeacher.length);
+
+      // 2. Generate Cell Dropdowns (Default Score = 4)
+      const makeDropdowns = (indicatorKey) => {
+        let html = `<table class="w-full border-collapse"><tr>`;
+        selectedJpForTeacher.forEach(jp => {
+          html += `
+            <td class="p-2 border-r border-slate-200 last:border-0 align-middle text-center" style="width:${100/selectedJpForTeacher.length}%">
+              <select data-indicator="${indicatorKey}" data-jp="${jp}" class="score-select w-full bg-slate-50 border border-slate-300 text-emerald-700 font-bold rounded-lg p-2 text-xs text-center outline-none focus:border-blue-600 focus:bg-white transition">
+                <option value="4" selected>4 (Sangat Baik)</option>
+                <option value="3">3 (Memuaskan)</option>
+                <option value="2">2 (Cukup)</option>
+                <option value="1">1 (Kurang)</option>
+              </select>
+            </td>
+          `;
+        });
+        html += `</tr></table>`;
+        return html;
+      };
+
+      document.getElementById('row_c1_inputs').innerHTML = makeDropdowns('c1');
+      document.getElementById('row_c2_inputs').innerHTML = makeDropdowns('c2');
+      document.getElementById('row_s1_inputs').innerHTML = makeDropdowns('s1');
+      document.getElementById('row_s2_inputs').innerHTML = makeDropdowns('s2');
+      document.getElementById('row_r1_inputs').innerHTML = makeDropdowns('r1');
+      document.getElementById('row_r2_inputs').innerHTML = makeDropdowns('r2');
+    }
+
+    async function submitForm() {
+      const btn = document.getElementById('btnSubmit');
+      const kelas = document.getElementById('kelasInput').value;
+      const tgl = document.getElementById('tglInput').value;
+      const catatan = document.getElementById('catatan').value;
+
+      const selects = document.querySelectorAll('.score-select');
+      let dataByJp = {};
+
+      selects.forEach(sel => {
+        const jp = sel.getAttribute('data-jp');
+        const key = sel.getAttribute('data-indicator');
+        const val = sel.value;
+
+        if (!dataByJp[jp]) dataByJp[jp] = {};
+        dataByJp[jp][key] = val;
+      });
+
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Menyimpan Penilaian...`;
+      lucide.createIcons();
+
+      try {
+        for (const jp in dataByJp) {
+          const payload = {
+            username: currentUser.username,
+            namaGuru: currentUser.nama,
+            tanggal: tgl,
+            kelas: kelas,
+            jamKe: jp,
+            c1: dataByJp[jp].c1,
+            c2: dataByJp[jp].c2,
+            s1: dataByJp[jp].s1,
+            s2: dataByJp[jp].s2,
+            r1: dataByJp[jp].r1,
+            r2: dataByJp[jp].r2,
+            catatan: catatan
+          };
+
+          await sendApiRequest({ action: 'submitData', payload: payload });
+        }
+
+        // Tampilkan Modal Pilihan setelah sukses
+        document.getElementById('customModal').classList.remove('hidden');
+
+      } catch (e) {
+        alert('Terjadi kesalahan saat menyimpan data ke Spreadsheet.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>Kirim Penilaian Jurnal</span>`;
+        lucide.createIcons();
+      }
+    }
+
+    // Modal Action Choice
+    function handleModalChoice(action) {
+      document.getElementById('customModal').classList.add('hidden');
+      
+      if (action === 'logout') {
+        logout();
+      } else if (action === 'repeat') {
+        document.getElementById('kelasInput').value = '';
+        document.getElementById('catatan').value = '';
+        document.getElementById('statusBox').classList.add('hidden');
+        document.getElementById('assessmentContainer').classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  </script>
+</body>
+</html>
