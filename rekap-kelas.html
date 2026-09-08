@@ -94,13 +94,20 @@
   </div>
 
   <script>
-    // MASUKKAN URL APPS SCRIPT SPREADSHEET BARU DI SINI
     const RECAP_GAS_URL = "https://script.google.com/macros/s/AKfycbz4QNvwO3iBQhF48wR4cFJHYJ9M6eGkzuC1NS8c7uZMX0Orl1zLX4cubFh4tfJAoSGTFg/exec";
 
     let authenticatedKelas = "";
 
-    document.getElementById('startDateInput').value = new Date().toISOString().substring(0, 10);
-    document.getElementById('endDateInput').value = new Date().toISOString().substring(0, 10);
+    // FUNGSI MENGAMBIL TANGGAL WIB (JAKARTA)
+    function getJakartaDateString() {
+      const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
+      return new Intl.DateTimeFormat('en-CA', options).format(new Date());
+    }
+
+    // Set tanggal default ke WIB
+    const todayJakarta = getJakartaDateString();
+    document.getElementById('startDateInput').value = todayJakarta;
+    document.getElementById('endDateInput').value = todayJakarta;
     lucide.createIcons();
 
     async function sendApiRequest(data) {
@@ -167,13 +174,13 @@
           return;
         }
 
-        // Urutkan rentang tanggal secara berurutan
-        res.rekap.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
+        // PERBAIKAN: Pengurutan tanggal yang aman tanpa terpengaruh bug timezone
+        res.rekap.sort((a, b) => a.tanggal.localeCompare(b.tanggal));
 
         let html = '';
 
         res.rekap.forEach(item => {
-          item.detailJp.sort((a, b) => a.jamKe - b.jamKe);
+          item.detailJp.sort((a, b) => Number(a.jamKe) - Number(b.jamKe));
 
           html += `
             <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm space-y-3">
