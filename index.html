@@ -175,7 +175,7 @@
 
     const indicatorsData = [
       { category: 'A. CLEAN (Kebersihan & Kerapian)', color: 'blue', items: [
-        { key: 'c1', title: '1. Kebersihan Bangunan & Mebel', desc: 'Kebersihan lantai dalam, teras, lemari, meja, kursi, papan tulis, pintu' },
+        { key: 'c1', title: '1. Kebersihan Bangunan & Mebel', desc: 'Kebersihan lantai dalam, teras, lemari, meja, kursi, papan tulis, pintu, jendela (Bersih dari sampah)' },
         { key: 'c2', title: '2. Kerapian & Keindahan', desc: 'Penataan meja kursi guru & siswa, alat kebersihan, hiasan kelas, lemari' }
       ]},
       { category: 'B. SAFE (Kelengkapan & Keamanan)', color: 'emerald', items: [
@@ -327,8 +327,8 @@
               <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex sm:flex-col justify-between items-center gap-2">
                 <span class="text-[11px] font-bold text-blue-900 uppercase">Jam Ke-${jp}</span>
                 <select data-indicator="${item.key}" data-jp="${jp}" class="score-select w-2/3 sm:w-full bg-white border border-slate-300 text-emerald-700 font-extrabold rounded-lg p-2 text-xs text-center outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition">
-                  <option value="4" selected>4 (Sangat Baik)</option>
-                  <option value="3">3 (Memuaskan)</option>
+                  
+                  <option value="3" selected>3 (Baik)</option>
                   <option value="2">2 (Cukup)</option>
                   <option value="1">1 (Kurang)</option>
                 </select>
