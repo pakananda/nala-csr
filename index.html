@@ -188,7 +188,15 @@
       ]}
     ];
 
-    document.getElementById('tglInput').value = new Date().toISOString().substring(0, 10);
+    // FUNGSI KHUSUS FORMANTING TANGGAL JAKARTA (WIB)
+    function getJakartaDateString() {
+      const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
+      const formatter = new Intl.DateTimeFormat('en-CA', options);
+      return formatter.format(new Date()); // Menghasilkan format YYYY-MM-DD
+    }
+
+    // Set default tanggal mengajar ke WIB Jakarta
+    document.getElementById('tglInput').value = getJakartaDateString();
     lucide.createIcons();
 
     async function sendApiRequest(data) {
@@ -311,7 +319,6 @@
                 <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-relaxed">${item.desc}</p>
               </div>
 
-              <!-- SCORES SECTION PER JP -->
               <div class="grid grid-cols-1 sm:grid-cols-${selectedJp.length} gap-2 pt-1">
           `;
 
