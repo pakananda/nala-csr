@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Penilaian Lomba Sekolah</title>
+  
+  <!-- SweetAlert2 & FontAwesome Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Palette Form Penilaian (Nature Emerald) */
+      --primary: #1b4d3e;
+      --primary-light: #2d6a4f;
+      --accent: #52b788;
+      --bg-light: #f4f7f4;
+      
+      /* Palette Riwayat Penilaian (Earthy Sand) */
+      --history-bg: #fffdf9;
+      --history-border: #e6ccb2;
+      --history-header: #7f5539;
+      --history-accent: #b08968;
+      --history-badge: #ddb892;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    body { 
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #dedef0 100%);
+      background-attachment: fixed;
+      color: #2b2b2b; 
+      padding: 30px 15px; 
+      line-height: 1.6; 
+    }
+
+    .container { 
+      max-width: 1000px; 
+      margin: 0 auto; 
+      background: rgba(255, 255, 255, 0.95); 
+      backdrop-filter: blur(10px);
+      padding: 35px; 
+      border-radius: 24px; 
+      box-shadow: 0 20px 40px rgba(27, 77, 62, 0.12); 
+      border: 1px solid rgba(255, 255, 255, 0.6); 
+    }
+
+    /* HEADER BANNER */
+    .header-banner { 
+      background: linear-gradient(135deg, #1b4d3e 0%, #2d6a4f 100%); 
+      color: white; 
+      padding: 28px; 
+      border-radius: 18px; 
+      text-align: center; 
+      margin-bottom: 30px; 
+      box-shadow: 0 10px 20px rgba(27, 77, 62, 0.2); 
+      position: relative;
+      overflow: hidden;
+    }
+    .header-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+    .header-banner h1 { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    /* WIZARD STEPPER */
+    .step-wizard { 
+      display: flex; 
+      gap: 12px;
+      margin-bottom: 30px; 
+      background: #eef5f0; 
+      padding: 8px; 
+      border-radius: 14px; 
+    }
+    .step-item { 
+      font-size: 13px; 
+      font-weight: 700; 
+      color: #6b8e7e; 
+      flex: 1; 
+      text-align: center; 
+      padding: 12px 10px; 
+      border-radius: 10px; 
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .step-item.active { 
+      background-color: var(--primary); 
+      color: #fff; 
+      box-shadow: 0 4px 12px rgba(27, 77, 62, 0.25);
+    }
+
+    .step-content { display: none; }
+    .step-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD INPUT UTAMA */
+    .meta-card { 
+      background: #f8faf8; 
+      border: 1px solid #d8e8dc; 
+      border-left: 6px solid var(--primary); 
+      padding: 24px; 
+      border-radius: 16px; 
+      margin-bottom: 25px; 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+      gap: 20px; 
+    }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-weight: 700; font-size: 13px; margin-bottom: 8px; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group select { 
+      padding: 12px 14px; 
+      border: 2px solid #cfe0d3; 
+      border-radius: 10px; 
+      font-size: 14px; 
+      outline: none; 
+      background-color: #ffffff; 
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+    .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.2); }
+
+    .theme-banner { 
+      background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
+      color: #0d47a1; 
+      border-left: 6px solid #1976d2; 
+      padding: 16px; 
+      border-radius: 12px; 
+      font-weight: 700; 
+      font-size: 14px; 
+      margin-bottom: 25px; 
+      text-align: center; 
+      box-shadow: 0 4px 10px rgba(25, 118, 210, 0.1);
+    }
+
+    /* TABEL PENILAIAN */
+    .table-container { overflow-x: auto; margin-bottom: 25px; border-radius: 14px; border: 1px solid #e0e0e0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #e8eee9; padding: 14px 12px; font-size: 13.5px; }
+    th { background-color: var(--primary); color: white; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; text-align: center; }
+    tr:nth-child(even) { background-color: #fafdfa; }
+    .aspek-cell { font-weight: 700; color: var(--primary); background-color: #e8f5e9 !important; vertical-align: top; }
+
+    /* PILIHAN SKOR INTERAKTIF */
+    .score-options { display: flex; gap: 8px; align-items: center; justify-content: center; }
+    .score-btn { position: relative; }
+    .score-btn input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .score-btn label { 
+      display: inline-flex; 
+      align-items: center; 
+      justify-content: center; 
+      width: 38px; 
+      height: 38px; 
+      border-radius: 10px; 
+      font-weight: 800; 
+      font-size: 14px; 
+      cursor: pointer; 
+      border: 2px solid #e0e0e0; 
+      background-color: #f8f9fa; 
+      color: #a0a0a0; 
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
+    .score-btn label:hover { transform: translateY(-2px); opacity: 0.8; }
+
+    .val-1 input[type="radio"]:checked + label { background-color: #e63946; color: #fff; border-color: #e63946; box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3); transform: scale(1.1); }
+    .val-2 input[type="radio"]:checked + label { background-color: #f4a261; color: #fff; border-color: #f4a261; box-shadow: 0 4px 10px rgba(244, 162, 97, 0.3); transform: scale(1.1); }
+    .val-3 input[type="radio"]:checked + label { background-color: #e9c46a; color: #fff; border-color: #e9c46a; box-shadow: 0 4px 10px rgba(233, 196, 106, 0.3); transform: scale(1.1); }
+    .val-4 input[type="radio"]:checked + label { background-color: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 4px 10px rgba(82, 183, 136, 0.4); transform: scale(1.1); }
+
+    .ket-input { width: 100%; padding: 10px; border: 1.5px solid #d0d0d0; border-radius: 8px; font-size: 13px; outline: none; transition: all 0.2s; }
+    .ket-input:focus { border-color: var(--primary); }
+
+    /* SUMMARY RINGKASAN */
+    .summary-card { 
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
+      border: 2px dashed var(--primary); 
+      padding: 20px 28px; 
+      border-radius: 14px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 25px; 
+    }
+    .summary-card .title { font-size: 14px; font-weight: 800; color: var(--primary); text-transform: uppercase; }
+    .summary-card .total { font-size: 32px; font-weight: 800; color: var(--primary); }
+
+    /* TOMBOL NAVIGASI */
+    .btn-group { display: flex; gap: 15px; }
+    .btn-nav { 
+      flex: 1; 
+      padding: 16px 20px; 
+      font-size: 15px; 
+      font-weight: 700; 
+      border-radius: 12px; 
+      border: none; 
+      cursor: pointer; 
+      transition: all 0.25s ease; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn-next { background-color: var(--primary); color: white; box-shadow: 0 4px 12px rgba(27, 77, 62, 0.2); }
+    .btn-next:hover { background-color: var(--primary-light); transform: translateY(-2px); }
+    .btn-prev { background-color: #8d99ae; color: white; }
+    .btn-prev:hover { background-color: #6c757d; transform: translateY(-2px); }
+    .btn-submit { background-color: #2a9d8f; color: white; box-shadow: 0 4px 12px rgba(42, 157, 143, 0.3); }
+    .btn-submit:hover { background-color: #264653; transform: translateY(-2px); }
+
+    /* ========================================================= */
+    /* KHUSUS AREA RIWAYAT (HISTORY) - DESAIN EARTHY WARM TONE */
+    /* ========================================================= */
+    .history-section { 
+      margin-top: 50px; 
+      background: var(--history-bg);
+      border: 2px solid var(--history-border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 25px rgba(127, 85, 57, 0.08);
+    }
+    .history-title { 
+      font-size: 18px; 
+      font-weight: 800; 
+      color: var(--history-header); 
+      margin-bottom: 20px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      border-bottom: 2px dashed var(--history-border);
+      padding-bottom: 12px;
+    }
+    .btn-refresh {
+      padding: 8px 16px; 
+      font-size: 12px; 
+      font-weight: 700;
+      cursor: pointer; 
+      border-radius: 8px; 
+      border: 1px solid var(--history-header); 
+      background: #fff; 
+      color: var(--history-header);
+      transition: all 0.2s;
+    }
+    .btn-refresh:hover { background: var(--history-header); color: #fff; }
+
+    .history-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .history-table th { 
+      background-color: var(--history-header); 
+      color: #fff; 
+      font-weight: 700; 
+      font-size: 12px; 
+      padding: 12px;
+      border: none;
+    }
+    .history-table th:first-child { border-radius: 10px 0 0 10px; }
+    .history-table th:last-child { border-radius: 0 10px 10px 0; }
+
+    .history-table td { 
+      background: #ffffff; 
+      border-top: 1px solid #f0e6df; 
+      border-bottom: 1px solid #f0e6df; 
+      padding: 14px 12px; 
+      font-size: 13px;
+    }
+    .history-table td:first-child { border-left: 1px solid #f0e6df; border-radius: 10px 0 0 10px; }
+    .history-table td:last-child { border-right: 1px solid #f0e6df; border-radius: 0 10px 10px 0; }
+
+    .badge-skor { 
+      background-color: #faedcd; 
+      color: #d4a373; 
+      font-weight: 800; 
+      padding: 6px 12px; 
+      border-radius: 20px; 
+      border: 1px solid #ccd5ae; 
+      display: inline-block; 
+      font-size: 14px;
+    }
+
+    @media (max-width: 650px) {
+      .container { padding: 18px; border-radius: 16px; }
+      .step-wizard { flex-direction: column; gap: 6px; }
+      .meta-card { grid-template-columns: 1fr; }
+      th, td { padding: 10px 6px; font-size: 12px; }
+      .score-btn label { width: 32px; height: 32px; font-size: 12px; }
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-banner">
+    <h1><i class="fa-solid fa-leaf"></i> Form Penilaian Lomba Sekolah</h1>
+  </div>
+
+  <div class="step-wizard">
+    <div class="step-item active" id="stepIndicator1"><i class="fa-solid fa-id-card"></i> 1. Informasi Utama</div>
+    <div class="step-item" id="stepIndicator2"><i class="fa-solid fa-clipboard-check"></i> 2. Memuat...</div>
+    <div class="step-item" id="stepIndicator3"><i class="fa-solid fa-star"></i> 3. Memuat...</div>
+  </div>
+
+  <!-- STEP 1: INFORMASI UTAMA -->
+  <div class="step-content active" id="step1">
+    <div class="meta-card">
+      <div class="form-group">
+        <label for="namaKelas"><i class="fa-solid fa-school"></i> Pilih Kelas:</label>
+        <select id="namaKelas">
+          <option value="">-- Memuat Kelas... --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="namaJuri"><i class="fa-solid fa-user-pen"></i> Nama Juri / Penilai:</label>
+        <select id="namaJuri">
+          <option value="">-- Memuat Juri... --</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="btn-group">
+      <button class="btn-nav btn-next" id="btnNextStep1" onclick="navigasiStep(2)">Lanjut ke Penilaian <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- STEP 2: PENILAIAN BAGIAN 1 -->
+  <div class="step-content" id="step2">
+    <h2 style="font-size:16px; margin-bottom:15px; color:var(--primary);" id="subjudulBagian1">BAGIAN 1: KEBERSIHAN KELAS (NALA-CSR)</h2>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 50px;">NO</th>
+            <th style="width: 180px;">ASPEK PENILAIAN</th>
+            <th>INDIKATOR</th>
+            <th style="width: 200px;">SKOR (1-4)</th>
+            <th style="width: 150px;">CATATAN/KET</th>
+          </tr>
+        </thead>
+        <tbody id="tableKebersihan"></tbody>
+      </table>
+    </div>
+
+    <div class="summary-card">
+      <div class="title" id="titleSkorBagian1">TOTAL SKOR BAGIAN 1</div>
+      <div class="total" id="skorBagian1">0</div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-nav btn-prev" onclick="navigasiStep(1)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+      <button class="btn-nav btn-next" id="btnNextStep2" onclick="navigasiStep(3)">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <!-- STEP 3: PENILAIAN BAGIAN 2 -->
+  <div class="step-content" id="step3">
+    <h2 style="font-size:16px; margin-bottom:10px; color:var(--primary);" id="subjudulBagian2">BAGIAN 2: POJOK BACA &amp; MADING</h2>
+    
+    <div id="themeBanner" class="theme-banner">
+      <i class="fa-solid fa-bullhorn"></i> TEMA BULAN INI
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 50px;">NO</th>
+            <th style="width: 180px;">ASPEK PENILAIAN</th>
+            <th>INDIKATOR</th>
+            <th style="width: 200px;">SKOR (1-4)</th>
+            <th style="width: 150px;">CATATAN/KET</th>
+          </tr>
+        </thead>
+        <tbody id="tableTema"></tbody>
+      </table>
+    </div>
+
+    <div class="summary-card">
+      <div class="title" id="titleSkorBagian2">TOTAL SKOR BAGIAN 2</div>
+      <div class="total" id="skorBagian2">0</div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-nav btn-prev" onclick="navigasiStep(2)"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+      <button class="btn-nav btn-submit" onclick="konfirmasiSimpan()"><i class="fa-solid fa-paper-plane"></i> Kirim Penilaian</button>
+    </div>
+  </div>
+
+  <!-- RIWAYAT PENILAIAN (WARM EARTHY THEME) -->
+  <div class="history-section">
+    <div class="history-title">
+      <span><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Penilaian Terakhir</span>
+      <button class="btn-refresh" onclick="muatDataMaster()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+    </div>
+
+    <div class="table-container" style="border:none;">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th style="width: 120px;">Waktu</th>
+            <th style="width: 80px;">Kelas</th>
+            <th style="width: 130px;">Juri</th>
+            <th style="width: 90px;">Total Skor</th>
+            <th id="thRiwayatCatatan1">Catatan Kebersihan</th>
+            <th id="thRiwayatCatatan2">Catatan Tema</th>
+          </tr>
+        </thead>
+        <tbody id="riwayatBody">
+          <tr><td colspan="6" style="text-align:center; padding: 20px;">Memuat riwayat penilaian...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxHlVAkbJQw6aqY0qfZXLgCLdRNiOqQC2srsGYg9CBAg_AlsDfA8_NGVhUXx_Lprgr2iQ/exec";
+
+let labelJenisPenilaian = {
+  bagian1: "Kebersihan Kelas (NALA-CSR)",
+  bagian2: "Pojok Baca & Mading"
+};
+
+const dataLomba = {
+  kebersihan: [
+    { aspek: "Kebersihan", rowspan: 7, list: ["Kebersihan lantai", "Kebersihan lemari kelas", "Kebersihan meja kursi", "Kebersihan papan tulis", "Kebersihan pintu dan jendela", "Kebersihan atap dalam kelas dan luar kelas", "Kebersihan teras kelas"] },
+    { aspek: "Kelengkapan", rowspan: 13, list: ["Keberadaan gambar presiden, wakil, garuda dalam keadaan baik", "Keberadaan Struktur organisasi kelas & jadwal pelajaran", "Keberadaan jadwal pelajaran", "Keberadaan daftar piket harian kelas", "Keberadaan pigura tatib dan inventaris (4 pigura) kondisi baik", "Keberadaan jam dinding dalam kondisi baik", "Keberadaan 1 tempat bendera, merah putih, sekolah kondisi baik", "Keberadaan 2 sapu, 1 kemoceng, 1 cikrak dalam kondisi baik", "Keberadaan 1 Papan Pengumuman", "Keberadaan 1 Taplak Meja guru", "Keberadaan 1 vas bunga meja guru", "Keberadaan rak dan tanaman depan kelas kondisi tanaman hidup", "Keberadaan pot putih dan tanaman depan kelas dalam kondisi baik"] },
+    { aspek: "Kerapian Keindahan", rowspan: 6, list: ["Penataan meja guru", "Penataan meja dan kursi siswa", "Penataan peralatan kebersihan", "Penataan hiasan kelas", "Penataan isi lemari", "Kesesuaian peletakan inventaris dan kelengkapan kelas"] }
+  ],
+  pojok_baca: [
+    { aspek: "Kebersihan", rowspan: 2, list: ["Area pojok baca tidak ada debu", "Area pojok baca tidak ada sampah"] },
+    { aspek: "Kelengkapan", rowspan: 3, list: ["Keberadaan nama pojok baca", "Keberadaan buku bacaan minimal 5 buku", "Keberadaan hiasan pojok baca umum"] },
+    { aspek: "Kerapian Keindahan", rowspan: 3, list: ["Penataan buku", "Penataan hiasan dan inventaris pojok baca", "Kesesuaian harmoni warna pojok baca"] },
+    { aspek: "Desain mading", rowspan: 4, list: ["Desain kreatif, menarik, rapi", "Terdapat hiasan yang berhubungan dengan tema mading", "Keunikan mading (misal: terdapat icon unik/inovasi yang beda )", "Perpaduan warna, tata konten dan hiasan mading"] },
+    { aspek: "Konten mading", rowspan: 4, list: ["Kesesuaian isi dengan tema", "Orisinalitas karya (tidak plagiat)", "Variasi konten/karya (artikel, puisi, cerpen, infografis, dll)", "konten dibuat dengan kreatifitas tangan (tulis & gambar manual)"] }
+  ]
+};
+
+let rawRiwayatData = [];
+
+function navigasiStep(stepTarget) {
+  if (stepTarget > 1) {
+    const kelas = document.getElementById("namaKelas").value;
+    const juri = document.getElementById("namaJuri").value;
+    if (!kelas || !juri) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Informasi Belum Lengkap!',
+        text: 'Harap pilih KELAS dan NAMA JURI terlebih dahulu sebelum melanjutkan.',
+        confirmButtonColor: '#1b4d3e'
+      });
+      return;
+    }
+  }
+
+  document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+
+  document.getElementById(`step${stepTarget}`).classList.add('active');
+  document.getElementById(`stepIndicator${stepTarget}`).classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function muatDataMaster() {
+  fetch(SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        if (data.jenisPenilaian && data.jenisPenilaian.length > 0) {
+          labelJenisPenilaian.bagian1 = data.jenisPenilaian[0] || labelJenisPenilaian.bagian1;
+          labelJenisPenilaian.bagian2 = data.jenisPenilaian[1] || labelJenisPenilaian.bagian2;
+        }
+
+        document.getElementById("stepIndicator2").innerHTML = `<i class="fa-solid fa-clipboard-check"></i> 2. ${labelJenisPenilaian.bagian1}`;
+        document.getElementById("stepIndicator3").innerHTML = `<i class="fa-solid fa-star"></i> 3. ${labelJenisPenilaian.bagian2}`;
+        
+        document.getElementById("subjudulBagian1").innerText = `BAGIAN 1: ${labelJenisPenilaian.bagian1.toUpperCase()}`;
+        document.getElementById("subjudulBagian2").innerText = `BAGIAN 2: ${labelJenisPenilaian.bagian2.toUpperCase()}`;
+        
+        document.getElementById("titleSkorBagian1").innerText = `TOTAL SKOR BAGIAN 1 (${labelJenisPenilaian.bagian1.toUpperCase()})`;
+        document.getElementById("titleSkorBagian2").innerText = `TOTAL SKOR BAGIAN 2 (${labelJenisPenilaian.bagian2.toUpperCase()})`;
+
+        document.getElementById("btnNextStep1").innerHTML = `Lanjut ke ${labelJenisPenilaian.bagian1} <i class="fa-solid fa-arrow-right"></i>`;
+        document.getElementById("btnNextStep2").innerHTML = `Lanjut ke ${labelJenisPenilaian.bagian2} <i class="fa-solid fa-arrow-right"></i>`;
+
+        document.getElementById("thRiwayatCatatan1").innerText = `Catatan (${labelJenisPenilaian.bagian1})`;
+        document.getElementById("thRiwayatCatatan2").innerText = `Catatan (${labelJenisPenilaian.bagian2})`;
+
+        const selectKelas = document.getElementById("namaKelas");
+        selectKelas.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+        data.kelas.forEach(k => { selectKelas.innerHTML += `<option value="${k}">${k}</option>`; });
+
+        const selectJuri = document.getElementById("namaJuri");
+        selectJuri.innerHTML = '<option value="">-- Pilih Nama Juri --</option>';
+        data.juri.forEach(j => { selectJuri.innerHTML += `<option value="${j}">${j}</option>`; });
+
+        if (data.tema && data.tema.trim() !== "") {
+          document.getElementById("themeBanner").innerHTML = `<i class="fa-solid fa-bullhorn"></i> TEMA BULAN INI: <b>${data.tema}</b>`;
+        }
+
+        rawRiwayatData = data.riwayat || [];
+        tampilkanRiwayat();
+      }
+    })
+    .catch(err => {
+      console.error("Gagal memuat data master:", err);
+    });
+}
+
+function renderTable(type, targetTbodyId) {
+  const tbody = document.getElementById(targetTbodyId);
+  tbody.innerHTML = "";
+  
+  let noIndex = 1;
+  let counter = 0;
+
+  dataLomba[type].forEach((group) => {
+    group.list.forEach((indikatorText, idx) => {
+      counter++;
+      const tr = document.createElement("tr");
+
+      if (idx === 0) {
+        const tdNo = document.createElement("td");
+        tdNo.innerText = noIndex++;
+        tdNo.className = "aspek-cell";
+        tdNo.style.textAlign = "center";
+        tdNo.rowSpan = group.rowspan;
+        tr.appendChild(tdNo);
+
+        const tdAspek = document.createElement("td");
+        tdAspek.innerText = group.aspek;
+        tdAspek.className = "aspek-cell";
+        tdAspek.rowSpan = group.rowspan;
+        tr.appendChild(tdAspek);
+      }
+
+      const tdIndikator = document.createElement("td");
+      tdIndikator.innerText = indikatorText;
+      tr.appendChild(tdIndikator);
+
+      const tdSkor = document.createElement("td");
+      tdSkor.style.textAlign = "center";
+
+      const scoreContainer = document.createElement("div");
+      scoreContainer.className = "score-options";
+
+      [1, 2, 3, 4].forEach((scoreVal) => {
+        const btnWrapper = document.createElement("div");
+        btnWrapper.className = `score-btn val-${scoreVal}`;
+
+        const radioInput = document.createElement("input");
+        radioInput.type = "radio";
+        radioInput.name = `${type}_skor_${counter}`;
+        radioInput.id = `${type}_skor_${counter}_${scoreVal}`;
+        radioInput.value = scoreVal;
+        radioInput.setAttribute('data-indikator', indikatorText);
+        if (scoreVal === 4) radioInput.checked = true;
+
+        radioInput.addEventListener("change", hitungSemuaSkor);
+
+        const label = document.createElement("label");
+        label.htmlFor = `${type}_skor_${counter}_${scoreVal}`;
+        label.innerText = scoreVal;
+
+        btnWrapper.appendChild(radioInput);
+        btnWrapper.appendChild(label);
+        scoreContainer.appendChild(btnWrapper);
+      });
+
+      tdSkor.appendChild(scoreContainer);
+      tr.appendChild(tdSkor);
+
+      const tdKet = document.createElement("td");
+      const ketInput = document.createElement("input");
+      ketInput.type = "text";
+      ketInput.className = "ket-input";
+      ketInput.id = `${type}_ket_${counter}`;
+      ketInput.placeholder = "Ket (opsional)";
+      tdKet.appendChild(ketInput);
+      tr.appendChild(tdKet);
+
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+function hitungSemuaSkor() {
+  let total1 = 0;
+  let count1 = 1;
+  while (document.querySelector(`input[name="kebersihan_skor_${count1}"]:checked`)) {
+    total1 += parseInt(document.querySelector(`input[name="kebersihan_skor_${count1}"]:checked`).value, 10);
+    count1++;
+  }
+  document.getElementById("skorBagian1").innerText = total1;
+
+  let total2 = 0;
+  let count2 = 1;
+  while (document.querySelector(`input[name="pojok_baca_skor_${count2}"]:checked`)) {
+    total2 += parseInt(document.querySelector(`input[name="pojok_baca_skor_${count2}"]:checked`).value, 10);
+    count2++;
+  }
+  document.getElementById("skorBagian2").innerText = total2;
+
+  return { total1, total2, grandTotal: total1 + total2 };
+}
+
+function tampilkanRiwayat() {
+  const tbody = document.getElementById("riwayatBody");
+  tbody.innerHTML = "";
+
+  if (rawRiwayatData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#8d99ae; padding: 20px;">Belum ada riwayat inputan.</td></tr>';
+    return;
+  }
+
+  rawRiwayatData.forEach(item => {
+    const tr = document.createElement("tr");
+    
+    const cat1Formatted = (item.catatanBagian1 || "-").replace(/\n/g, "<br>");
+    const cat2Formatted = (item.catatanBagian2 || "-").replace(/\n/g, "<br>");
+
+    tr.innerHTML = `
+      <td style="font-size:12px; color:#7f5539; text-align:center;">${item.timestamp}</td>
+      <td style="font-weight:800; text-align:center; color:#7f5539;">${item.kelas}</td>
+      <td style="font-weight:600; color:#525252;">${item.juri}</td>
+      <td style="text-align:center;"><span class="badge-skor">${item.totalSkor || 0}</span></td>
+      <td style="font-size:12px; white-space:pre-line; color:#4a4a4a;">${cat1Formatted}</td>
+      <td style="font-size:12px; white-space:pre-line; color:#4a4a4a;">${cat2Formatted}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function konfirmasiSimpan() {
+  const kelas = document.getElementById("namaKelas").value;
+  const juri = document.getElementById("namaJuri").value;
+  const skor = hitungSemuaSkor();
+
+  if (!kelas || !juri) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Peringatan!',
+      text: 'Harap pastikan KELAS dan NAMA JURI telah dipilih.',
+      confirmButtonColor: '#1b4d3e'
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: 'Rekapitulasi Penilaian',
+    html: `
+      <div style="text-align:left; font-size:14px; line-height:1.8;">
+        <p><b>Kelas Terpilih:</b> ${kelas}</p>
+        <p><b>Juri Penilai:</b> ${juri}</p>
+        <hr style="margin:10px 0; border:0; border-top:1px solid #ccc;">
+        <p><b>1. ${labelJenisPenilaian.bagian1}:</b> <span style="color:#1b4d3e; font-weight:bold;">${skor.total1}</span></p>
+        <p><b>2. ${labelJenisPenilaian.bagian2}:</b> <span style="color:#1b4d3e; font-weight:bold;">${skor.total2}</span></p>
+        <hr style="margin:10px 0; border:0; border-top:1px solid #ccc;">
+        <p style="font-size:16px;"><b>TOTAL SKOR GABUNGAN:</b> <span style="color:#2a9d8f; font-weight:bold;">${skor.grandTotal}</span></p>
+      </div>
+    `,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, Simpan Data',
+    cancelButtonText: 'Cek Kembali',
+    confirmButtonColor: '#1b4d3e',
+    cancelButtonColor: '#8d99ae'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      prosesSimpanData(kelas, juri, skor);
+    }
+  });
+}
+
+function prosesSimpanData(kelas, juri, skor) {
+  let detailSkor = {};
+
+  let count1 = 1;
+  while (document.querySelector(`input[name="kebersihan_skor_${count1}"]:checked`)) {
+    const radio = document.querySelector(`input[name="kebersihan_skor_${count1}"]:checked`);
+    const ket = document.getElementById(`kebersihan_ket_${count1}`).value;
+    
+    detailSkor[radio.getAttribute('data-indikator')] = { 
+      skor: radio.value, 
+      ket: ket || "-", 
+      bagian: 1 
+    };
+    count1++;
+  }
+
+  let count2 = 1;
+  while (document.querySelector(`input[name="pojok_baca_skor_${count2}"]:checked`)) {
+    const radio = document.querySelector(`input[name="pojok_baca_skor_${count2}"]:checked`);
+    const ket = document.getElementById(`pojok_baca_ket_${count2}`).value;
+    
+    detailSkor[radio.getAttribute('data-indikator')] = { 
+      skor: radio.value, 
+      ket: ket || "-", 
+      bagian: 2 
+    };
+    count2++;
+  }
+
+  Swal.fire({
+    title: 'Menyimpan Data...',
+    text: 'Mohon tunggu sebentar, data sedang dikirim ke Google Sheets.',
+    allowOutsideClick: false,
+    didOpen: () => { Swal.showLoading(); }
+  });
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      juri: juri,
+      kelas: kelas,
+      jenisLomba: `Gabungan (${labelJenisPenilaian.bagian1} & ${labelJenisPenilaian.bagian2})`,
+      skorBagian1: skor.total1,
+      skorBagian2: skor.total2,
+      totalSkor: skor.grandTotal,
+      detailSkor: detailSkor
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil Disimpan!',
+        html: `Penilaian untuk kelas <b>${kelas}</b> berhasil dicatat.<br><b>Total Skor: ${skor.grandTotal}</b>`,
+        confirmButtonColor: '#1b4d3e'
+      }).then(() => {
+        location.reload();
+      });
+    } else {
+      Swal.fire({ icon: 'error', title: 'Gagal Menyimpan!', text: data.message });
+    }
+  })
+  .catch(err => {
+    Swal.fire({ icon: 'error', title: 'Koneksi Terputus!', text: 'Gagal terhubung ke Google Sheets.' });
+  });
+}
+
+window.onload = function() {
+  renderTable('kebersihan', 'tableKebersihan');
+  renderTable('pojok_baca', 'tableTema');
+  hitungSemuaSkor();
+  muatDataMaster();
+};
+</script>
+
+</body>
+</html>
