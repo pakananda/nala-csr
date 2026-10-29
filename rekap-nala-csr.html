@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rekapitulasi Skor Penilaian Nala CSR</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--ink:#14283c;--mut:#5d6f80;--line:#d3dce3;--bg:#eef2f1;--teal:#0f766e;--x:#c98a12;--xi:#2b6cb0;--xii:#1f8a63}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.wrap{max-width:1280px;margin:0 auto;padding:16px}
+.top{background:var(--ink);color:#fff;border-radius:14px;padding:18px 22px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.top h1{margin:0;font-size:22px}.top p{margin:2px 0 0;color:#aebfcd;font-size:13px}
+.btn{border:0;border-radius:9px;padding:9px 16px;font:600 13px inherit;font-family:inherit;cursor:pointer;background:#27425c;color:#fff}
+.btn.pri{background:#e0a21b;color:#14283c}.btn:hover{filter:brightness(1.1)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.tab{border:1px solid var(--line);background:#fff;color:var(--mut);padding:10px 16px;border-radius:10px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.tab.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+.panel h2{margin:0 0 12px;font-size:16px}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.bar label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:3px}
+input,select{border:1px solid var(--line);border-radius:9px;padding:8px 11px;font:inherit;background:#f8fafa;min-width:150px}
+input:focus,select:focus{outline:2px solid var(--teal);outline-offset:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.card{border-radius:12px;padding:15px 18px;color:#fff}
+.card small{font-size:12px;font-weight:600;opacity:.9}
+.card b{display:block;font-size:26px;line-height:1.2;margin:4px 0 2px}
+.card span{font-size:13px;opacity:.95}
+.jX{background:var(--x)}.jXI{background:var(--xi)}.jXII{background:var(--xii)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+th{background:var(--ink);color:#fff;font-size:12px;white-space:nowrap}
+tbody tr:nth-child(even){background:#f6f9f9}
+.c{text-align:center}.r{text-align:right}.k{font-weight:700}
+td.tot,th.tot{background:#e3f3f0;color:#0b524c;font-weight:700}th.tot{background:var(--teal);color:#fff}
+.sl{position:sticky;left:0;z-index:2;background:#fff}.sr{position:sticky;right:0;z-index:2}
+th.sl,th.sr{background:var(--ink);z-index:3}
+.db{position:relative;min-width:120px}.db i{position:absolute;left:0;top:0;bottom:0;background:rgba(15,118,110,.18)}.db span{position:relative}
+.badge{display:inline-block;background:#e0a21b;color:#14283c;border-radius:6px;font-size:11px;font-weight:700;padding:1px 7px;margin-left:6px}
+.empty{padding:22px;text-align:center;color:var(--mut)}
+.err{background:#fdecec;border:1px solid #f0b4b4;color:#8a1f1f;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:none}
+.hidden{display:none!important}
+.pr{display:none}
+@media(max-width:760px){.grid3{grid-template-columns:1fr}}
+@media print{
+ @page{size:A4 landscape;margin:8mm}
+ body{background:#fff;font-size:9pt}.wrap{max-width:none;padding:0}
+ .noprint,.tabs,.top{display:none!important}
+ .pr{display:block;text-align:center;border-bottom:2px solid var(--teal);padding-bottom:5px;margin-bottom:8px}
+ .pr h1{margin:0;font-size:15pt}.pr p{margin:1px 0;font-size:9pt;color:#444}
+ .panel{border:0;padding:0;margin-bottom:8px}.panel h2{font-size:11pt;margin-bottom:5px}
+ .scroll{overflow:visible;border:0}
+ .grid3{gap:8px;margin-bottom:8px}.card{padding:8px 12px}.card b{font-size:15pt}
+ table{font-size:8pt}th,td{padding:3px 5px;border-color:#888}
+ .sl,.sr{position:static}
+ tr{break-inside:avoid}thead{display:table-header-group}
+ #matrix{font-size:6.5pt}#matrix th,#matrix td{padding:2px 1px;text-align:center}
+ #matrix th:first-child,#matrix td:first-child{text-align:left;padding-left:4px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="pr">
+ <h1 id="pTitle"></h1>
+ <p>Penilaian Kebersihan &amp; Keamanan Sarpras Kelas</p>
+ <p id="pSub"></p>
+</div>
+
+<div class="top noprint">
+ <div><h1>Nala CSR Dashboard</h1><p>Rekapitulasi penilaian kebersihan &amp; keamanan kelas</p></div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+  <span id="upd" style="font-size:12px;color:#aebfcd"></span>
+  <button class="btn" onclick="loadAll()">Muat ulang</button>
+  <button class="btn pri" onclick="window.print()">Cetak A4</button>
+ </div>
+</div>
+
+<div class="tabs">
+ <button class="tab on" id="t-jurnal" onclick="tab('jurnal')">Jurnal Kebersihan Kelas</button>
+ <button class="tab" id="t-juri" onclick="tab('juri')">Hasil Inputan Juri</button>
+ <button class="tab" id="t-juara" onclick="tab('juara')">Juara &amp; Rekapitulasi Total</button>
+</div>
+
+<div class="err" id="err"></div>
+
+<!-- TAB JURNAL -->
+<section id="s-jurnal">
+ <div class="panel noprint"><div class="bar">
+  <div><label for="d1">Tanggal mulai</label><input type="date" id="d1"></div>
+  <div><label for="d2">Tanggal selesai</label><input type="date" id="d2"></div>
+  <button class="btn pri" onclick="renderJurnal()">Terapkan</button>
+  <button class="btn" style="background:#5d6f80" onclick="allDates()">Semua tanggal</button>
+ </div></div>
+ <div class="grid3" id="topJ"></div>
+ <div class="panel noprint"><h2>Total skor jurnal per kelas</h2><div style="height:270px"><canvas id="chart"></canvas></div></div>
+ <div class="panel">
+  <div class="bar" style="justify-content:space-between;margin-bottom:10px">
+   <h2 style="margin:0">Matriks skor jurnal per hari</h2>
+   <input class="noprint" type="search" id="q" placeholder="Cari kelas…" oninput="renderJurnal()">
+  </div>
+  <div class="scroll"><table id="matrix"></table></div>
+ </div>
+</section>
+
+<!-- FILTER BULAN (Juri & Juara) -->
+<div class="panel noprint hidden" id="bulanBar"><div class="bar">
+ <div><label for="selBulan">Bulan penilaian</label><select id="selBulan" onchange="renderRekap()"><option value="">Semua bulan (akumulasi)</option></select></div>
+ <div><label for="selSort">Urutkan tabel</label><select id="selSort" onchange="renderRekap()">
+  <option value="skor">Juara (skor tertinggi)</option>
+  <option value="jenjang">Per jenjang, juara dulu</option>
+  <option value="nama">Nama kelas (A–Z)</option>
+  <option value="namaz">Nama kelas (Z–A)</option>
+ </select></div>
+</div></div>
+
+<!-- TAB JURI -->
+<section id="s-juri" class="hidden">
+ <div class="panel"><h2>Data penilaian oleh juri</h2><div class="scroll"><table id="juriT"></table></div></div>
+</section>
+
+<!-- TAB JUARA -->
+<section id="s-juara" class="hidden">
+ <div class="grid3" id="topC"></div>
+ <div class="panel"><h2>Rekapitulasi total penilaian (jurnal + juri)</h2><div class="scroll"><table id="totalT"></table></div></div>
+</section>
+
+<div class="pr" style="margin-top:8px;font-size:8pt;color:#666">Dicetak dari Dashboard Nala CSR pada <span id="pTime"></span></div>
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbxopF0Wmeb8gqeTtlARO2dH2lMo9pXN0Z9rGw54qG4n0qG5qRE1R0Mjb0cXlMWdlPR2/exec';
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const JEN=['X','XI','XII'], COL={X:'#c98a12',XI:'#2b6cb0',XII:'#1f8a63'};
+const TITLE={jurnal:'REKAPITULASI SKOR JURNAL KEBERSIHAN KELAS',juri:'HASIL PENILAIAN JURI',juara:'REKAPITULASI JUARA & PENILAIAN AKHIR NALA CSR'};
+let jurnal=[], rekap=[], chart=null, cur='jurnal', first=true;
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>Number(n).toLocaleString('id-ID',{maximumFractionDigits:2});
+const jen=k=>{const m=/^(XII|XI|X)(?![A-Z])/.exec(k);return m?m[1]:null};
+const nat=(a,b)=>{const ja=JEN.indexOf(jen(a)),jb=JEN.indexOf(jen(b));return ja-jb||a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'})};
+const bln=b=>typeof b==='number'?(BLN[b-1]||b):b;
+function monthNum(v){
+  const s=String(v==null?'':v).trim().toLowerCase();
+  if(/^\d+$/.test(s))return +s;
+  const i=s.length>=3?BLN.findIndex(b=>b.toLowerCase().slice(0,3)===s.slice(0,3)):-1;
+  return i>=0?i+1:s;
+}
+const fmtIso=iso=>iso.split('-').reverse().join('/');
+
+function tab(t){
+  cur=t;
+  ['jurnal','juri','juara'].forEach(x=>{
+    $('s-'+x).classList.toggle('hidden',x!==t);
+    $('t-'+x).classList.toggle('on',x===t);
+  });
+  $('bulanBar').classList.toggle('hidden',t==='jurnal');
+  $('pTitle').textContent=TITLE[t];
+  info();
+}
+function info(){
+  $('pSub').textContent = cur==='jurnal'
+    ? 'Periode: '+($('d1').value?fmtIso($('d1').value):'-')+' s/d '+($('d2').value?fmtIso($('d2').value):'-')
+    : 'Bulan: '+($('selBulan').value?bln(+$('selBulan').value):'Semua bulan (akumulasi)');
+  $('pTime').textContent=new Date().toLocaleString('id-ID');
+}
+function showErr(msg){const e=$('err');e.textContent=msg||'';e.style.display=msg?'block':'none'}
+
+async function getJson(url){
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const d=await r.json();
+  if(d&&d.error)throw new Error(d.error);
+  if(!Array.isArray(d))throw new Error('Format data tidak dikenali');
+  return d;
+}
+
+async function loadAll(){
+  showErr('');
+  const errs=[];
+  try{
+    const d=await getJson(API);
+    jurnal=d.map(i=>({iso:i.isoDate||'',tgl:i.tanggal||'',kelas:String(i.kelas||'').toUpperCase(),skor:Number(i.skor)||0})).filter(i=>i.iso&&i.kelas);
+    if(first){
+      // Default: tanggal 1 bulan berjalan sampai hari ini (waktu lokal)
+      const n=new Date(),p=x=>String(x).padStart(2,'0');
+      $('d1').value=n.getFullYear()+'-'+p(n.getMonth()+1)+'-01';
+      $('d2').value=n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate());
+    }
+    renderJurnal();
+  }catch(e){errs.push('Data jurnal gagal dimuat ('+e.message+')')}
+  try{
+    // Ambil semua bulan sekaligus; filter bulan dilakukan di sini agar format "1"/"01"/"Januari" tidak masalah.
+    rekap=mergeRekap(await getJson(API+'?action=rekap_nilai'));
+    fillBulan();renderRekap();
+  }catch(e){errs.push('Data rekap gagal dimuat ('+e.message+')')}
+  first=false;
+  showErr(errs.join('. '));
+  $('upd').textContent='Diperbarui '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  info();
+}
+
+// Sheet berisi 3 tabel terpisah (Jurnal | Juri | Total) dalam satu baris yang sama,
+// jadi baris belum tentu satu kelas. Gabungkan berdasarkan kelas + bulan.
+function mergeRekap(rows){
+  const m={};
+  rows.forEach(r=>['jurnal','juri','total'].forEach(t=>{
+    const e=r[t]; if(!e||!e.kelas)return;
+    const b=monthNum(e.bulan), k=e.kelas+'|'+b;
+    (m[k]||(m[k]={kelas:e.kelas,bulan:b}))[t]=Number(e.skor)||0;
+  }));
+  return Object.values(m).map(o=>({
+    kelas:o.kelas,bulan:o.bulan,
+    jurnal:o.jurnal||0,juri:o.juri||0,hasJuri:o.juri!==undefined,
+    final:o.total!==undefined?o.total:(o.jurnal||0)+(o.juri||0)
+  }));
+}
+function fillBulan(){
+  const sel=$('selBulan'),old=sel.value;
+  const ms=[...new Set(rekap.map(o=>o.bulan))].sort((a,b)=>(+a||99)-(+b||99));
+  sel.innerHTML='<option value="">Semua bulan (akumulasi)</option>'+ms.map(b=>'<option value="'+esc(b)+'">'+esc(bln(b))+'</option>').join('');
+  sel.value=ms.map(String).includes(old)?old:'';
+}
+function rekapView(){
+  const b=$('selBulan').value;
+  if(b!=='')return rekap.filter(o=>String(o.bulan)===b);
+  const m={};
+  rekap.forEach(o=>{
+    const a=m[o.kelas]||(m[o.kelas]={kelas:o.kelas,bulan:'Semua',jurnal:0,juri:0,final:0,hasJuri:false});
+    a.jurnal+=o.jurnal;a.juri+=o.juri;a.final+=o.final;a.hasJuri=a.hasJuri||o.hasJuri;
+  });
+  return Object.values(m);
+}
+function champs(list,key){
+  const out={};
+  JEN.forEach(j=>{
+    const l=list.filter(o=>jen(o.kelas)===j), mx=Math.max(0,...l.map(o=>o[key]));
+    out[j]={mx,names:mx>0?l.filter(o=>o[key]===mx).map(o=>o.kelas):[]};
+  });
+  return out;
+}
+function cards(el,ch,label,suffix){
+  $(el).innerHTML=JEN.map(j=>'<div class="card j'+j+'"><small>'+label+' Jenjang '+j+'</small><b>'+(ch[j].names.length?esc(ch[j].names.join(' & ')):'–')+'</b><span>'+suffix+': <strong>'+fmt(ch[j].mx)+'</strong></span></div>').join('');
+}
+
+function renderJurnal(){
+  const s=$('d1').value,e=$('d2').value,q=$('q').value.trim().toUpperCase();
+  const f=jurnal.filter(i=>(!s||i.iso>=s)&&(!e||i.iso<=e));
+  const agg={};f.forEach(i=>agg[i.kelas]=(agg[i.kelas]||0)+i.skor);
+  const list=Object.keys(agg).map(k=>({kelas:k,skor:agg[k]}));
+  cards('topJ',champs(list,'skor'),'Tertinggi','Total skor');
+  drawChart(list);
+  drawMatrix(f,q);
+  info();
+}
+function allDates(){$('d1').value='';$('d2').value='';renderJurnal()}
+
+function drawChart(list){
+  if(typeof Chart==='undefined')return;
+  list.sort((a,b)=>nat(a.kelas,b.kelas));
+  if(chart)chart.destroy();
+  chart=new Chart($('chart'),{type:'bar',
+    data:{labels:list.map(o=>o.kelas),datasets:[{data:list.map(o=>o.skor),backgroundColor:list.map(o=>COL[jen(o.kelas)]||'#5d6f80'),borderRadius:5,maxBarThickness:34}]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:250},plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#eef2f1'}},x:{grid:{display:false}}}}});
+}
+
+function drawMatrix(f,q){
+  const t=$('matrix');
+  if(!f.length){t.innerHTML='<tr><td class="empty">Tidak ada data pada rentang tanggal ini. Ubah tanggal atau pilih “Semua tanggal”.</td></tr>';return}
+  const dates=[...new Set(f.map(i=>i.iso))].sort();
+  const lbl={};f.forEach(i=>lbl[i.iso]=i.tgl||fmtIso(i.iso).slice(0,5));
+  const mx={};f.forEach(i=>{const k=i.kelas+i.iso;mx[k]=(mx[k]||0)+i.skor});
+  const top=Math.max(1,...Object.values(mx));
+  const kelas=[...new Set(f.map(i=>i.kelas))].filter(k=>k.includes(q)).sort(nat);
+  let h='<thead><tr><th class="sl">Kelas</th>'+dates.map(d=>'<th class="c">'+esc(lbl[d])+'</th>').join('')+'<th class="r tot sr">Total</th></tr></thead><tbody>';
+  kelas.forEach(k=>{
+    let tot=0;
+    h+='<tr><td class="sl k">'+esc(k)+'</td>';
+    dates.forEach(d=>{
+      const v=mx[k+d]||0;tot+=v;
+      h+=v?'<td class="c" style="background:rgba(15,118,110,'+(0.08+0.32*v/top).toFixed(2)+')"><b>'+fmt(v)+'</b></td>':'<td class="c" style="color:#b6c2cb">-</td>';
+    });
+    h+='<td class="r tot sr">'+fmt(tot)+'</td></tr>';
+  });
+  t.innerHTML=h+(kelas.length?'':'<tr><td class="empty" colspan="'+(dates.length+2)+'">Kelas tidak ditemukan.</td></tr>')+'</tbody>';
+}
+
+// Peringkat selalu dihitung dari skor; urutan tampil mengikuti pilihan "Urutkan tabel".
+function ranked(list,key){
+  const s=list.slice().sort((a,b)=>b[key]-a[key]||nat(a.kelas,b.kelas));
+  const rk=new Map();let r=0,prev=null;
+  s.forEach((o,i)=>{if(o[key]!==prev){r=i+1;prev=o[key]}rk.set(o,r)});
+  const m=$('selSort').value;
+  if(m==='nama')s.sort((a,b)=>nat(a.kelas,b.kelas));
+  else if(m==='namaz')s.sort((a,b)=>nat(b.kelas,a.kelas));
+  else if(m==='jenjang')s.sort((a,b)=>JEN.indexOf(jen(a.kelas))-JEN.indexOf(jen(b.kelas))||b[key]-a[key]||nat(a.kelas,b.kelas));
+  return s.map(o=>({o,rank:rk.get(o)}));
+}
+
+function renderRekap(){
+  const v=rekapView(), bl=$('selBulan').value;
+  const bcell=o=>esc(bl===''?'Semua':bln(o.bulan));
+
+  // Tab Juri
+  const jr=ranked(v.filter(o=>o.hasJuri),'juri');
+  const jm=Math.max(1,...jr.map(x=>x.o.juri));
+  $('juriT').innerHTML=jr.length
+    ?'<thead><tr><th class="c">Peringkat</th><th>Kelas</th><th class="c">Jenjang</th><th class="c">Bulan</th><th>Skor juri</th></tr></thead><tbody>'
+      +jr.map(({o,rank})=>'<tr><td class="c">'+rank+'</td><td class="k">'+esc(o.kelas)+'</td><td class="c">'+(jen(o.kelas)||'-')+'</td><td class="c">'+bcell(o)+'</td><td class="db"><i style="width:'+(100*o.juri/jm).toFixed(1)+'%"></i><span class="k">'+fmt(o.juri)+'</span></td></tr>').join('')+'</tbody>'
+    :'<tbody><tr><td class="empty">Belum ada nilai juri untuk pilihan bulan ini.</td></tr></tbody>';
+
+  // Tab Juara
+  const ch=champs(v,'final');
+  cards('topC',ch,'Juara','Total skor');
+  const win=new Set(JEN.flatMap(j=>ch[j].names));
+  const tr=ranked(v,'final');
+  $('totalT').innerHTML=tr.length
+    ?'<thead><tr><th class="c">Peringkat</th><th>Kelas</th><th class="c">Bulan</th><th class="r">Nilai jurnal</th><th class="r">Nilai juri</th><th class="r tot">Total skor akhir</th></tr></thead><tbody>'
+      +tr.map(({o,rank})=>'<tr><td class="c">'+rank+'</td><td class="k">'+esc(o.kelas)+(win.has(o.kelas)&&o.final>0?'<span class="badge">Juara '+jen(o.kelas)+'</span>':'')+'</td><td class="c">'+bcell(o)+'</td><td class="r">'+fmt(o.jurnal)+'</td><td class="r">'+fmt(o.juri)+'</td><td class="r tot">'+fmt(o.final)+'</td></tr>').join('')+'</tbody>'
+    :'<tbody><tr><td class="empty">Belum ada data rekapitulasi untuk pilihan bulan ini.</td></tr></tbody>';
+  info();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{tab('jurnal');loadAll();setInterval(loadAll,120000)});
+window.addEventListener('beforeprint',info);
+</script>
+</body>
+</html>
